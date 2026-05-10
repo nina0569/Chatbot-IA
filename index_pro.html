@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Chatbot IA Profesional</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #1e1e2f, #2c2f48);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
+}
+
+.container {
+    width: 420px;
+    height: 600px;
+    background: #2c2f48;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: #4CAF50;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.chatbox {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.msg {
+    margin: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 75%;
+}
+
+.user {
+    background: #2196F3;
+    align-self: flex-end;
+}
+
+.bot {
+    background: #444;
+    align-self: flex-start;
+}
+
+.input-area {
+    display: flex;
+    padding: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    margin-left: 5px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+🤖 Tutor IA
+</div>
+
+<div id="chatbox" class="chatbox"></div>
+
+<div class="input-area">
+<input id="input" placeholder="Escribe tu pregunta...">
+<button onclick="enviar()">Enviar</button>
+</div>
+
+</div>
+
+<script>
+
+const URL = "https://chatbot-ia-6blz.onrender.com/chat";
+
+function agregarMensaje(texto, tipo) {
+    let chat = document.getElementById("chatbox");
+    let div = document.createElement("div");
+    div.className = "msg " + tipo;
+    div.innerText = texto;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+async function enviar() {
+    let input = document.getElementById("input");
+    let texto = input.value;
+
+    if (texto === "") return;
+
+    agregarMensaje("👨‍🎓 " + texto, "user");
+    input.value = "";
+
+    agregarMensaje("🤖 Pensando...", "bot");
+
+    try {
+        let res = await fetch(URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({mensaje: texto})
+        });
+
+        let data = await res.json();
+
+        document.querySelector(".chatbox").lastChild.remove();
+        agregarMensaje("🤖 " + data.respuesta, "bot");
+
+    } catch {
+        agregarMensaje("❌ Error de conexión", "bot");
+    }
+}
+</script>
+
+</body>
+</html>
