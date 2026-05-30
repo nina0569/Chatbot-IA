@@ -1,19 +1,8 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import os
-from openai import OpenAI
-
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-@app.route("/")
-def home():
-    return "Chatbot IA funcionando correctamente 🚀"
-
-@app.route("/chat", methods=["POST", "OPTIONS"])
+@app.route("/chat", methods=["POST", "GET", "OPTIONS"])
 def chat():
+    if request.method == "GET":
+        return jsonify({"respuesta": "Ruta /chat funcionando. Usa POST para conversar."})
+
     if request.method == "OPTIONS":
         return jsonify({"ok": True}), 200
 
@@ -38,7 +27,3 @@ def chat():
 
     except Exception as e:
         return jsonify({"respuesta": "Error interno: " + str(e)}), 500
-
-if __name__ == "__main__":
-    puerto = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=puerto)
